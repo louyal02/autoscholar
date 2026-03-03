@@ -1,0 +1,63 @@
+# 论文搜索配置
+paper:
+  keywords:
+    - LLM
+    - Large Language Model
+    - GPT
+    - Language Model
+    - Transformer
+    - ChatGPT
+
+  focus_areas:
+    - Education
+    - Benchmark
+    - evaluation
+    - assessment
+    - learning
+    - teaching
+
+  max_papers_per_day: 10
+  days_back: 7
+
+arxiv:
+  categories:
+    - cs.CL
+    - cs.LG
+    - cs.AI
+  enabled: true
+
+conferences:
+  enabled: false
+  list:
+    - NeurIPS
+    - AAAI
+    - ACL
+    - EMNLP
+    - ICLR
+    - KDD
+    - CHI
+
+llm:
+  enabled: true
+  api_key: "${DASHSCOPE_API_KEY}"
+  base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  model: "qwen3.5-plus"
+  timeout: 180
+
+email:
+  enabled: true
+  smtp_host: "${SMTP_HOST}"
+  smtp_port: 465
+  smtp_user: "${SMTP_USER}"
+  smtp_password: "${SMTP_PASSWORD}"
+  from_name: "LLM Paper Tracker"
+  to_emails:
+    - "${TO_EMAIL}"
+
+scheduler:
+  time: "09:30"
+  enabled: true
+
+logging:
+  level: INFO
+  file: data/logs/tracker.log
