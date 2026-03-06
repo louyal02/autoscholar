@@ -11,8 +11,8 @@ class LLMAnalyzer:
     
     def __init__(self, api_key: Optional[str] = None, base_url: Optional[str] = None, model: Optional[str] = None, timeout: int = 180):
         self.api_key = api_key
-        self.base_url = base_url or "https://api.openai.com/v1"
-        self.model = model or "gpt-3.5-turbo"
+        self.base_url = base_url or "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation"
+        self.model = model or "qwen3.5-plus"
         self.timeout = timeout
         self.client = None
     
@@ -23,7 +23,7 @@ class LLMAnalyzer:
                 from openai import OpenAI
                 self.client = OpenAI(
                     api_key=self.api_key,
-                    base_url=self.base_url,
+                    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
                     timeout=self.timeout
                 )
             except ImportError:

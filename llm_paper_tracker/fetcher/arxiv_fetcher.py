@@ -14,29 +14,35 @@ class ArxivFetcher:
     
     BASE_URL = "http://export.arxiv.org/api/query"
     
+    LLM_SYNONYMS = ["LLM", "Large Language Model", "GPT", "Language Model", "Transformer", "ChatGPT"]
+    EDUCATION_SYNONYMS = ["education", "educational", "learning", "teaching", "student", "teacher", "course", "instruction"]
+    BENCHMARK_SYNONYMS = ["benchmark", "leaderboard", "evaluation", "assessment", "排行榜"]
+    
     def __init__(self, categories: List[str] = None, keywords: List[str] = None):
         self.categories = categories or ["cs.CL", "cs.LG", "cs.AI"]
-        self.keywords = keywords or ["LLM", "Large Language Model", "GPT", "Transformer"]
     
-    def _build_query(self, keywords: List[str], categories: List[str], days_back: int = 7) -> str:
-        """构建搜索查询"""
+    def _build_query(self, days_back: int = 7) -> str:
+        """构建精确搜索查询: (LLM OR 同义词) AND (教育 OR 基准测试)"""
         date_from = (datetime.now() - timedelta(days=days_back)).strftime("%Y%m%d%H%M")
         
-        keyword_parts = [f"all:{kw}" for kw in keywords]
-        keyword_query = " OR ".join(keyword_parts)
+        llm_query = " OR ".join([f'"{kw}"' for kw in self.LLM_SYNONYMS])
+        education_query = " OR ".join([f'"{kw}"' for kw in self.EDUCATION_SYNONYMS])
+        benchmark_query = " OR ".join([f'"{kw}"' for kw in self.BENCHMARK_SYNONYMS])
         
-        cat_query = " OR ".join([f"cat:{cat}" for cat in categories])
+        content_query = f"(({llm_query}) AND ({education_query} OR {benchmark_query}))"
         
-        full_query = f"({keyword_query}) AND ({cat_query}) AND submittedDate:[{date_from} TO 99991231235959]"
+        cat_query = " OR ".join([f"cat:{cat}" for cat in self.categories])
+        
+        full_query = f"({content_query}) AND ({cat_query}) AND submittedDate:[{date_from} TO 99991231235959]"
         
         return urllib.parse.quote(full_query)
     
     def fetch_papers(self, max_results: int = 50, days_back: int = 7) -> List[Dict]:
         """获取论文列表"""
-        query = self._build_query(self.keywords, self.categories, days_back)
+        query = self._build_query(days_back)
         url = f"{self.BASE_URL}?search_query={query}&start=0&max_results={max_results}&sortBy=submittedDate&sortOrder=descending"
         
-        logger.info(f"Fetching arXiv papers with URL: {url}")
+        logger.info(f"Fetching arXiv papers with query: (LLM+Education) OR (LLM+Benchmark)")
         
         try:
             with urllib.request.urlopen(url, timeout=30) as response:
