@@ -14,7 +14,7 @@ arxiv:
 llm:
   enabled: true
   api_key: "your-api-key-here"
-  model: "qwen3.5-plus"
+  model: "your-model"
   timeout: 180
 
 email:
